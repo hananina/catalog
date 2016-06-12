@@ -21,6 +21,27 @@ def test():
     print hoge
     return render_template('home.html',hoge = hoge)
 
+@app.route('/category/items')
+def showCategories():
+    return render_template('categoryitems.html')
+
+@app.route('/category/item')
+def showItem():
+    return render_template('item.html')
+
+@app.route('/item/edit')
+def editItem():
+    return render_template('edititem.html')
+
+@app.route('/item/delete')
+def deleteItem():
+    return render_template('deleteitem.html')
+
+@app.route('/item/add')
+def addItem():
+    return render_template('additem.html')
+
+
 if __name__ == '__main__':
     app.secret_key  = 'super_secret_key' # which flask will use to create sessions for our users.
     app.debug = True

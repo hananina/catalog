@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
  
-from database_setup import Shop, Base, Item
+from database_setup import Base, Category, Item
  
 engine = create_engine('sqlite:///catalog.db')
 # Bind the engine to the metadata of the Base class so that the
@@ -19,62 +19,63 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
-#Items for Benefit
-shop1 = Shop(name = "Benefit")
+#Items for Eyes
+category1 = Category(name = "Eyes")
 
-session.add(shop1)
+session.add(category1)
 session.commit()
 
-item1 = Item(name = "roller lash curling mascara", description = "It is a roller for lashes! The eye-opening Hook n Roll brush grabs, separates, lifts and curls... while the instant curve-setting formula holds for 12 hours. Contains provitamin B5 and serin.", category = "eyes", shop_id = "shop1")
+item1 = Item(name = "roller lash mascara", description = "A mascara inspired by hair rollers", 
+            category_id = category1.id)
 
 session.add(item1)
 session.commit()
 
-item2 = Item(name = "posiebalm", description = "posiebalm conditions & hydrates with mango butter and sodium hyaluronate. This kiss of sheer color gives you the prettiest lips.",
-             category = "lips", shop = shop1)
+item2 = Item(name = "Smudge Stick Waterproof Eye Liner", description = "Our bestselling Smudge Sticks are available in an array of matte and shimmer formulas",
+             category_id = category1.id)
 
 session.add(item2)
 session.commit()
 
-item3 = Item(name = "the POREfessional face primer", description = "Quickly minimize the appearance of pores & fine lines for smoother-than-smooth skin! Apply this silky, lightweight balm alone, under or over makeup. The translucent formula contains a vitamin E derivative known to protect skin from free radicals.",
-             category = "face", shop = shop1)
+item3 = Item(name = "Naked Eye Color Palette", description = "brown and dark brown",
+            category_id = category1.id)
 
 session.add(item3)
 session.commit()
 
-item4 = Item(name = "total moisture facial cream", description = "This facial cream provides concentrated hydration for a radiantly refreshed complexion. Our exclusive tri-radiance complex helps develop the skin's water reserves and reinforces the moisture barrier. Contains mango butter, a natural plant-based emollient known to provide moisture.",
-           category = "skincare", shop = shop1)
+item4 = Item(name = "Eye Cream", description = "This Eye cream provides concentrated hydration for a radiantly refreshed complexion. Our exclusive tri-radiance complex helps develop the skin's water reserves and reinforces the moisture barrier. Contains mango butter, a natural plant-based emollient known to provide moisture.",
+          category_id = category1.id)
 
 session.add(item4)
 session.commit()
 
 
-#Items for Stila
-shop2 = Shop(name = "Stila")
+#Items for Lips
+category2 = Category(name = "Lips")
 
-session.add(shop1)
+session.add(category2)
 session.commit()
 
-item1 = Item(name = "Smudge Stick Waterproof Eye Liner", description = "Our bestselling Smudge Sticks are available in an array of matte and shimmer formulas",
-             category = "eyes", shop = shop2)
+item1 = Item(name = "Fresh Sugar Lip Treatment Sunscreen SPF 15", description = "A bestselling lip treatment and a cult favorite among all who try it, including Hollywoods elite that moisturizes, protects, and smooths the lips.",
+              category_id = category2.id)
 
 session.add(item1)
 session.commit()
 
-item2 = Item(name = "Convertible Color", description = "Our ingenious two in one lipstick and blush is loaded with creamy",
-             category = "lips", shop = shop2)
+item2 = Item(name = "Smashbox Always On Matte Liquid Lipstick", description = "An eight-hour wear, liquid-matte lipstick with a featherweight, comfortable formula that stays put and keeps color looking as fresh and flawless as the first swipe. ",
+              category_id = category2.id)
 
 session.add(item2)
 session.commit()
 
-item3 = Item(name = "Correct & Perfect All-in-One Color Correcting Palette", description = "Create Complexion Perfection! Under-eye circles, redness, uneven or dull skin?  Not anymore with this all-in-one customizable color correcting palette.  Five velvety smooth cream color correctors and two tinted setting powders are all you need to help neutralize imperfections and brighten dull skin tones.  ", 
-            category = "face", shop = shop2)
+item3 = Item(name = "Dior Dior Addict Lip Glow", description = "A sheer balm that enhances your natural lip color while moisturizing and protecting lips. ", 
+            category_id = category2.id)
 
 session.add(item3)
 session.commit()
 
-item4 = Item(name = "Shape & Shade Custom Contour Duo", description = "This ultra-creamy, super-soft contour and high-light duo, uniquely, in three shades, is the perfect contouring solution for all skin tones. ", 
-            category = "face", shop = shop2)
+item4 = Item(name = "Bite Beauty Amuse Bouche Lipstick", description = "A collection of high-impact lipsticks in dimensional shades that have been handcrafted to deliver extreme moisture, soft texture, and creamy wear. ", 
+             category_id = category2.id)
 
 session.add(item4)
 session.commit()

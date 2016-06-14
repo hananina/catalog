@@ -11,10 +11,10 @@ Base = declarative_base()
 
 
 ##class
-class Shop(Base):
+class Category(Base):
 
     #table
-    __tablename__ = 'shop'
+    __tablename__ = 'category'
 
 
     # mapper
@@ -39,10 +39,8 @@ class Item(Base):
 
     description = Column (String(1000))
 
-    category = Column (String(250))
-
-    shop_id = Column(Integer,ForeignKey('shop.id'))
-    shop = relationship(Shop)
+    category_id = Column(Integer,ForeignKey('category.id'))
+    category = relationship(Category)
 
 
 ####insert at end of file#####

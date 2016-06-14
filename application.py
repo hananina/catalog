@@ -3,7 +3,7 @@ app = Flask(__name__)
 # from flask import request
 
 # import CRUD oparations from lesson 1 #
-from database_setup import Base, Shop, Item
+from database_setup import Base, Category, Item
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -16,28 +16,27 @@ session = DBSession()
 
 @app.route('/')
 def test():
-    hoge = session.query(Shop).first()
+    hoges = session.query(Item).all()
+    return render_template('home.html',hoges = hoges)
 
-    print hoge
-    return render_template('home.html',hoge = hoge)
+@app.route('/<string:category>/items')
+def showCategoryItems():
+    items = session.query(Item).filter_by(category = category).all()
+    return render_template('categoryitems.html', items)
 
-@app.route('/category/items')
-def showCategories():
-    return render_template('categoryitems.html')
-
-@app.route('/category/item')
+@app.route('/<string:category>/<string:item>')
 def showItem():
     return render_template('item.html')
 
-@app.route('/item/edit')
+@app.route('/<string:item>/edit')
 def editItem():
     return render_template('edititem.html')
 
-@app.route('/item/delete')
+@app.route('/<string:item>/delete')
 def deleteItem():
     return render_template('deleteitem.html')
 
-@app.route('/item/add')
+@app.route('/<string:item>/add')
 def addItem():
     return render_template('additem.html')
 

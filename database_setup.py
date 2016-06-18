@@ -1,7 +1,8 @@
 #config
 import os
 
-from sqlalchemy import Column, ForeignKey, Integer, String
+from datetime import datetime
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
 from sqlalchemy.orm import relationship
@@ -34,12 +35,17 @@ class Item(Base):
     name = Column (
       String(80), nullable = False)
 
-    id = Column ( 
+    id = Column (
       Integer, primary_key = True)
 
-    description = Column (String(1000))
+    created_date = Column(DateTime, default=datetime.utcnow())
 
-    category_id = Column(Integer,ForeignKey('category.id'))
+    description = Column (
+      String(1000))
+
+    category_id = Column(
+      Integer, ForeignKey('category.id'))
+
     category = relationship(Category)
 
 

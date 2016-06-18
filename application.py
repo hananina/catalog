@@ -16,7 +16,7 @@ session = DBSession()
 
 @app.route('/')
 def test():
-    hoges = session.query(Item).all()
+    hoges = session.query(Item).order_by(Item.created_date).limit(3)
     return render_template('home.html',hoges = hoges)
 
 @app.route('/<string:category>/items')

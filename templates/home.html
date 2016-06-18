@@ -56,7 +56,7 @@
         <div class="latest-update">
           <ul>
             {% for hoge in hoges %}
-              <li class="red">{{ hoge.name }}</li>
+              <li class="red">{{ hoge.name }} {{ hoge.created_date }}</li>
             {% endfor %}
           </ul>
         </div>

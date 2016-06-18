@@ -17,12 +17,13 @@ session = DBSession()
 @app.route('/')
 def test():
     hoges = session.query(Item).order_by(Item.created_date).limit(3)
-    return render_template('home.html',hoges = hoges)
+    return render_template('home.html', hoges = hoges)
 
-@app.route('/<string:category>/items')
-def showCategoryItems():
-    items = session.query(Item).filter_by(category = category).all()
-    return render_template('categoryitems.html', items)
+@app.route('/<string:category_name>/items')
+def showCategoryItems(category_name):
+    thecategory = session.query(Category).filter(Category.name == category_name).one()
+    items  = session.query(Item).filter_by(category_id = thecategory.id)
+    return render_template('categoryitems.html', category_name = category_name, items = items)
 
 @app.route('/<string:category>/<string:item>')
 def showItem():

@@ -46,16 +46,18 @@
       <div class="container">
         <div class="starter-template">
           <h1>
-            Welcome to categories!
+            {{ category_name }}
           </h1>
           <p class="lead">
-            there will be category list and items.
+            Items in this category are listed below.
           </p>
         </div>
         
         <div class="latest-update">
           <ul>
-            <li></li>
+            {% for item in items%}
+            <li>{{item.name}}</li>
+            {% endfor %}
           </ul>
         </div>
 

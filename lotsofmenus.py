@@ -25,7 +25,7 @@ category1 = Category(name = "Eyes")
 session.add(category1)
 session.commit()
 
-item1 = Item(name = "roller lash mascara", description = "A mascara inspired by hair rollers", 
+item1 = Item(name = "Roller Lash Mascara", description = "A mascara inspired by hair rollers", 
             category_id = category1.id)
 
 session.add(item1)

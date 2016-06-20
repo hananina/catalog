@@ -25,19 +25,23 @@ def showCategoryItems(category_name):
     items  = session.query(Item).filter_by(category_id = thecategory.id)
     return render_template('categoryitems.html', category_name = category_name, items = items)
 
-@app.route('/<string:category>/<string:item>')
-def showItem():
-    return render_template('item.html')
+@app.route('/<string:category_name>/<string:item_slug>')
+def showItem(category_name, item_slug):
+    # item name with "_" will convert "_" to spaces for creating taxt to display to users. 
+    item_name = item_slug.replace('_', ' ')
+    item = session.query(Item).filter(Item.name == item_name).one()
+    return render_template('item.html', category_name = category_name, item = item)
 
-@app.route('/<string:item>/edit')
+@app.route('/<string:item_name>/edit')
 def editItem():
+    
     return render_template('edititem.html')
 
-@app.route('/<string:item>/delete')
+@app.route('/<string:item_name>/delete')
 def deleteItem():
     return render_template('deleteitem.html')
 
-@app.route('/<string:item>/add')
+@app.route('/<string:item_name>/add')
 def addItem():
     return render_template('additem.html')
 

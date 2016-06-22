@@ -36,11 +36,17 @@ def showItem(category_slug, item_slug):
 @app.route('/<string:category_slug>/<string:item_slug>/edit', methods = ['GET','POST'])
 def editItem(category_slug, item_slug):
     item = session.query(Item).filter(Item.slug == item_slug).one()
-    theCategory = session.query(Category).filter(Category.slug == category_slug).one()
     
     if request.method == "POST":
 
-        print theCategory.name
+        item.name = request.form['name']
+        item.description = request.form['description']
+        item.category_id = request.form['category_id']
+        session.add(item)
+        session.commit()
+        flash(item.name + 'has been updated succesfully!')
+
+        theCategory = session.query(Category).filter(Category.id == item.category_id).one()
 
         return redirect (url_for('showItem', category_slug=theCategory.slug, item_slug= item.slug))      
 

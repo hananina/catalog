@@ -46,12 +46,13 @@ def editItem(category_slug, item_slug):
         session.commit()
         flash(item.name + 'has been updated succesfully!')
 
+        # to get category slug from updated item, in order to use redirect argument
         theCategory = session.query(Category).filter(Category.id == item.category_id).one()
 
         return redirect (url_for('showItem', category_slug=theCategory.slug, item_slug= item.slug))      
 
     else:
-        # to get category name
+        # to get category info
         theCategory = session.query(Category).filter(Category.slug == category_slug).one()
         # to get categories for edit category the item is belonged.
         categories = session.query(Category).all()

@@ -17,7 +17,7 @@
     </header>
 
     <main role="main">
-      
+
       <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
           <div class="navbar-header">
@@ -52,12 +52,36 @@
             you can edit item info here.
           </p>
         </div>
+      
+        <form class="col-md-8 col-md-offset-2 col-xs-12" method='POST' enctype = 'multipart/form-data' action='{{ url_for("editItem", category_slug=theCategory.slug, item_slug=item.slug)}}'>
+
+          <fieldset class="form-group">
+            <label for="name">Name</label>
+            <input class="form-control" id="name" type='text' name='name' value ='{{item.name}}' placeholder="{{item.name}}" size='30'>
+          </fieldset>
+
+          <fieldset class="form-group">
+            <label for="description">Description</label>
+            <textarea class="form-control" id="description" name='description' rows="3" >{{item.description}}</textarea>
+          </fieldset>
+
+          <div class="form-group">
+            <label for="category">Category</label>
+            <select class="form-control c-select" id="category" name="category_id">
+              {% for category in categories%} 
+              <option class="{% if(category.id == item.category_id) %}selected{% endif %}" value="{{category.id}}">
+                {{ category.name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
         
-        <div class="latest-update">
-          <ul>
-            <li></li>
-          </ul>
-        </div>
+          <fieldset class="form-group">  
+            <input type='submit' class="btn btn-primary" value='Update'>
+            <button button type="button" class="btn btn-secondary" href="{{ url_for('home')}}">Cancel</button>
+          </fieldset>
+
+        </form>
 
       
       </div>

@@ -15,33 +15,48 @@ session = DBSession()
 
 
 @app.route('/')
-def test():
+def home():
     hoges = session.query(Item).order_by(Item.created_date).limit(3)
     return render_template('home.html', hoges = hoges)
 
-@app.route('/<string:category_name>/items')
-def showCategoryItems(category_name):
-    thecategory = session.query(Category).filter(Category.name == category_name).one()
-    items  = session.query(Item).filter_by(category_id = thecategory.id)
-    return render_template('categoryitems.html', category_name = category_name, items = items)
+@app.route('/<string:category_slug>/items')
+def showCategoryItems(category_slug):
+    theCategory = session.query(Category).filter(Category.slug == category_slug).one()
+    items  = session.query(Item).filter_by(category_id = theCategory.id)
+    return render_template('categoryitems.html', category_name=theCategory.name, items=items)
 
-@app.route('/<string:category_name>/<string:item_slug>')
-def showItem(category_name, item_slug):
-    # item name with "_" will convert "_" to spaces for creating taxt to display to users. 
-    item_name = item_slug.replace('_', ' ')
-    item = session.query(Item).filter(Item.name == item_name).one()
-    return render_template('item.html', category_name = category_name, item = item)
 
-@app.route('/<string:item_name>/edit')
-def editItem():
+@app.route('/<string:category_slug>/<string:item_slug>')
+def showItem(category_slug, item_slug):
+    theCategory = session.query(Category).filter(Category.slug == category_slug).one()
+    item = session.query(Item).filter(Item.slug == item_slug).one()
+    return render_template('item.html', category_name=theCategory.name, item=item)
+
+
+@app.route('/<string:category_slug>/<string:item_slug>/edit', methods = ['GET','POST'])
+def editItem(category_slug, item_slug):
+    item = session.query(Item).filter(Item.slug == item_slug).one()
+    theCategory = session.query(Category).filter(Category.slug == category_slug).one()
     
-    return render_template('edititem.html')
+    if request.method == "POST":
 
-@app.route('/<string:item_name>/delete')
+        print theCategory.name
+
+        return redirect (url_for('showItem', category_slug=theCategory.slug, item_slug= item.slug))      
+
+    else:
+        # to get category name
+        theCategory = session.query(Category).filter(Category.slug == category_slug).one()
+        # to get categories for edit category the item is belonged.
+        categories = session.query(Category).all()
+        return render_template('edititem.html', item=item, theCategory=theCategory, categories=categories)
+
+
+@app.route('/<string:item_slug>/delete')
 def deleteItem():
     return render_template('deleteitem.html')
 
-@app.route('/<string:item_name>/add')
+@app.route('/<string:item_slug>/add')
 def addItem():
     return render_template('additem.html')
 

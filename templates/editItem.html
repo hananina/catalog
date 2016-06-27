@@ -53,7 +53,7 @@
           </p>
         </div>
       
-        <form class="col-md-8 col-md-offset-2 col-xs-12" method='POST' enctype = 'multipart/form-data' action='{{ url_for("editItem", category_slug=theCategory.slug, item_slug=item.slug)}}'>
+        <form class="col-md-8 col-md-offset-2 col-xs-12" method='POST' enctype = 'multipart/form-data' action='{{ url_for("editItem", category_slug=category_slug, item_slug=item.slug)}}'>
 
           <fieldset class="form-group">
             <label for="name">Name</label>
@@ -78,7 +78,7 @@
         
           <fieldset class="form-group">  
             <input type='submit' class="btn btn-primary" value='Update'>
-            <button button type="button" class="btn btn-secondary" href="{{ url_for('home')}}">Cancel</button>
+            <a rple="button" class="btn btn-secondary" href="{{ url_for('showItem', category_slug=category_slug, item_slug=item.slug)}}">Cancel</button>
           </fieldset>
 
         </form>

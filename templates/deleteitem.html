@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta content="IE=edge" http-equiv="X-UA-Compatible" />
     <meta content="width=device-width, initial-scale=1" name="viewport" />
-    <title>Catalog | Delete item</title>
+    <title>Catalog | Delete Item</title>
     <link href="{{ url_for('static',filename='bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ url_for('static', filename='normalize.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ url_for('static', filename='main.min.css') }}" rel="stylesheet" type="text/css" />
@@ -46,19 +46,26 @@
       <div class="container">
         <div class="starter-template">
           <h1>
-            Welcome to delete item!
+            {{ category_name }} > {{ item.name }}
           </h1>
           <p class="lead">
-            you can delete item info here.
+            Are you realy sure you need to DELETE this item?!
           </p>
         </div>
-        
-        <div class="latest-update">
-          <ul>
-            <li></li>
-          </ul>
-        </div>
 
+        <form class="col-md-8 col-md-offset-2 col-xs-12" method='POST' enctype = 'multipart/form-data' action='{{ url_for("deleteItem", category_slug=category_slug, item_slug=item.slug)}}'>
+        
+          <fieldset class="form-group">
+            <h4 class="">Name</h4>
+            <p class="">{{ item.name }}</p>
+          </fieldset>
+
+          <fieldset class="form-group">  
+            <input type='submit' class="btn btn-primary" value='Delete'>
+            <a role="button" class="btn btn-secondary" href='{{ url_for("showItem", category_slug=category_slug, item_slug=item.slug)}}'>Cancel</a>
+          </fieldset>
+
+        </form>
       
       </div>
     </main>

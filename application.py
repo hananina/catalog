@@ -73,9 +73,28 @@ def deleteItem(category_slug, item_slug):
         return render_template('deleteitem.html', item=item, category_slug=category_slug, category_name= theCategory.name)
 
 
-@app.route('/<string:category_slug>/<string:item_slug>/add')
+@app.route('/add', methods =['GET','POST'])
 def addItem():
-    return render_template('additem.html')
+
+    if request.method == "POST":
+
+        newItem = Item(
+                    name=request.form['name'], 
+                    slug=request.form['name'].lower().replace(' ','_'), 
+                    description=request.form['description'], 
+                    category_id=request.form['category_id']
+                )
+
+        session.add(newItem)
+        session.commit()
+
+        theCategory = session.query(Category).filter(Category.id==request.form['category_id']).one()
+
+        return redirect (url_for('showCategoryItems', category_slug=theCategory.slug))
+
+    else:
+        categories = session.query(Category).all()
+        return render_template('additem.html',categories=categories)
 
 
 if __name__ == '__main__':

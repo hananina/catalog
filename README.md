@@ -6,7 +6,7 @@
 A project for [Udacity Full-Stack Web Developer Nanodegree](https://www.udacity.com/course/full-stack-web-developer-nanodegree--nd004), I'm enrolled in Novenber 2015.
 
 Item Catalog Web Application is to display cosmetic item's information for a use.
-and a user can get logged in to the Web Application with SNS accounts to edit, delete, add an information.
+and you can also log in to the Web Application with SNS accounts to edit, delete, add an information.
 
 
 ## Operating Environment 

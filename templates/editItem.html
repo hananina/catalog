@@ -27,16 +27,16 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Catalog</a>
+            <a class="navbar-brand" href="/">Catalog</a>
           </div>
 
           <div class="collapse navbar-collapse" id="navbar">
             <ul class="nav navbar-nav">
               <li class="active">
-                <a href="eyes/items">Eyes</a>
+                <a href="/eyes/items">Eyes</a>
               </li>
               <li>
-                <a href="lips/items">Lips</a>
+                <a href="/lips/items">Lips</a>
               </li>
             </ul>
           </div>
@@ -46,7 +46,7 @@
       <div class="container">
         <div class="starter-template">
           <h1>
-            Welcome to edit item!
+            <a href="/{{ category_slug }}/items">{{ category_name }}</a> > {{ item.name }}
           </h1>
           <p class="lead">
             you can edit item info here.

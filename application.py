@@ -7,11 +7,24 @@ from database_setup import Base, Category, Item
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+# new impotys for this step
+from flask import session as login_session
+import random, string
+
+
 # Create session and connect to DB
 engine = create_engine('sqlite:///catalog.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
+
+
+# ton generate unique session token
+@app.route('/login')
+def showLogin():
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+    login_session['state'] = state
+    return render_template('login.html')
 
 
 @app.route('/')

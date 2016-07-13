@@ -55,6 +55,18 @@ class Item(Base):
     category = relationship(Category)
 
 
+    @property
+    def serialize(self):
+        # returns object data in easily serializable format
+        return {
+            'name' :self.name,
+            'slug' : self.slug,
+            'id' : self.id,
+            'create_date': self.create_date,
+            'description': self.description,
+            'category_id': self.category_id
+        }
+
 ####insert at end of file#####
 engine = create_engine(
   'sqlite:///catalog.db'

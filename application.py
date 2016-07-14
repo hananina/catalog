@@ -147,9 +147,8 @@ def gdisconnect():
 
     if access_token is None:
         print 'no access token'
-        response = make_response(json.dumps('Current User not connected'), 401)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        response = "Current User not connected."
+        return render_template('notification.html', response=response)
 
     #Excute HTTP GET request to revoke current token.
     # To revoke, pass the access token to Google's url and store the response in "result" object.
@@ -168,22 +167,25 @@ def gdisconnect():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
-
-        response = make_response(json.dumps('successfully disconnected!'), 200)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        response = "You are succesfully logged out."
+        return render_template('notification.html', response=response)
 
     else:
         # For watever reason, the given token was invalid.
-        response = make_response(json.dumps("Faild to revoke token for intended user"), 400)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        response = "Faild to revoke token for intended user."
+        return render_template('notification.html', response=response)
 
 
 @app.route('/')
 def home():
+    # to check the user is logged in.
+    if 'username' in login_session:
+        status = "logged_in"
+    else:
+        status = "logged_out"
+
     hoges = session.query(Item).order_by(Item.created_date).limit(3)
-    return render_template('home.html', hoges = hoges)
+    return render_template('home.html', hoges = hoges, status=status)
 
 @app.route('/<string:category_slug>/items')
 def showCategoryItems(category_slug):
@@ -201,6 +203,10 @@ def showItem(category_slug, item_slug):
 
 @app.route('/<string:category_slug>/<string:item_slug>/edit', methods = ['GET','POST'])
 def editItem(category_slug, item_slug):
+    # to check the user is logged in.
+    if 'username' not in login_session:
+        return redirect('/login')
+
     item = session.query(Item).filter(Item.slug == item_slug).one()
 
     if request.method == "POST":
@@ -226,6 +232,10 @@ def editItem(category_slug, item_slug):
 
 @app.route('/<string:category_slug>/<string:item_slug>/delete', methods = ['GET','POST'])
 def deleteItem(category_slug, item_slug):
+    # to check the user is logged in.
+    if 'username' not in login_session:
+        return redirect('/login')
+
     item = session.query(Item).filter(Item.slug == item_slug).one()
     theCategory = session.query(Category).filter(Category.slug == category_slug).one()
     
@@ -241,9 +251,11 @@ def deleteItem(category_slug, item_slug):
 
 @app.route('/add', methods =['GET','POST'])
 def addItem():
+    # to check the user is logged in.
+    if 'username' not in login_session:
+        return redirect('/login')
 
     if request.method == "POST":
-
         newItem = Item(
                     name=request.form['name'], 
                     slug=request.form['name'].lower().replace(' ','_'), 

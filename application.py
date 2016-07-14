@@ -81,7 +81,7 @@ def gconnect():
     url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s' % access_token)
     h = httplib2.Http()
     result = json.loads(h.request(url, 'GET')[1])
-    
+
     # if there was an error in the access token info, abort
     if result.get('error') is not None:
         response = make_response(json.dumps(result.get("error")), 500)
@@ -112,8 +112,14 @@ def gconnect():
         return response
 
     # store the access token in the session for later use,
-    login_session ['credentials'] = credentials
+    login_session['access_token'] = credentials.access_token
     login_session['gplus_id'] = gplus_id
+
+    
+    print 'logins_session access_token'
+    print login_session.get('access_token')
+
+
 
     # Get user info: requesting the user info allowed by my token scope
     # I will store credential token
@@ -139,17 +145,14 @@ def gconnect():
     return output
 
 
-
 # Disconnect - revoke a current user's token and reset thir login_session.
 @app.route('/gdisconnect')
 def gdisconnect():
-
     # only disconnect a connected user.
-    credentials = login_session.get('credentials')
+    access_token = login_session.get('access_token')
+    print access_token
 
-    print credentials.access_token
-
-    if credentials is None:
+    if access_token is None:
         print 'no access token'
         response = make_response(json.dumps('Current User not connected'), 401)
         response.headers['Content-Type'] = 'application/json'
@@ -157,11 +160,12 @@ def gdisconnect():
 
     #Excute HTTP GET request to revoke current token.
     # To revoke, pass the access token to Google's url and store the response in "result" object.
-    access_token = credentials.access_token
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
     print 'result is '
+    print 'access_token in disconnect is = '
+    print access_token
     print result
 
     if result['status'] == '200':

@@ -115,12 +115,6 @@ def gconnect():
     login_session['access_token'] = credentials.access_token
     login_session['gplus_id'] = gplus_id
 
-    
-    print 'logins_session access_token'
-    print login_session.get('access_token')
-
-
-
     # Get user info: requesting the user info allowed by my token scope
     # I will store credential token
     userinfo_url = 'https://www.googleapis.com/oauth2/v1/userinfo'
@@ -150,7 +144,6 @@ def gconnect():
 def gdisconnect():
     # only disconnect a connected user.
     access_token = login_session.get('access_token')
-    print access_token
 
     if access_token is None:
         print 'no access token'
@@ -170,7 +163,7 @@ def gdisconnect():
 
     if result['status'] == '200':
         # Reset the user's session.
-        del login_session['credentials']
+        del login_session['access_token']
         del login_session['gplus_id']
         del login_session['username']
         del login_session['email']

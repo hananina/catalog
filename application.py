@@ -148,6 +148,7 @@ def gconnect():
     return output
 
 
+# local permission helpers.
 def createUser(login_session):
     newUser = User(name=login_session['username'], email=login_session[
                    'email'], picture=login_session['picture'])
@@ -215,8 +216,8 @@ def home():
     else:
         status = "logged_out"
 
-    hoges = session.query(Item).order_by(Item.created_date).limit(3)
-    return render_template('home.html', hoges = hoges, status=status)
+    items = session.query(Item).order_by(Item.created_date).limit(3)
+    return render_template('home.html', items = items, status=status)
 
 @app.route('/<string:category_slug>/items')
 def showCategoryItems(category_slug):
@@ -229,7 +230,14 @@ def showCategoryItems(category_slug):
 def showItem(category_slug, item_slug):
     theCategory = session.query(Category).filter(Category.slug == category_slug).one()
     item = session.query(Item).filter(Item.slug == item_slug).one()
-    return render_template('item.html', category_slug=category_slug, category_name=theCategory.name, item=item)
+
+    creater = getUserInfo(item.user_id)
+
+    if 'username' not in login_session or creater != login_session['user_id']:
+        return render_template('item_public.html', category_slug=category_slug, category_name=theCategory.name, item=item)
+
+    else:
+        return render_template('item_private.html', category_slug=category_slug, category_name=theCategory.name, item=item, creater=creater)
 
 
 @app.route('/<string:category_slug>/<string:item_slug>/edit', methods = ['GET','POST'])
@@ -271,6 +279,10 @@ def deleteItem(category_slug, item_slug):
     item = session.query(Item).filter(Item.slug == item_slug).one()
     theCategory = session.query(Category).filter(Category.slug == category_slug).one()
     
+    if item.user_id != login_session['user_id']:
+        print "n000!!!!!!"
+        return "<script>function alertFunction(){ alert('You are not authrized to delete this item.');}</script><body onload='alertFunction()'>"
+
     if request.method == "POST":
         session.delete(item)
         session.commit()

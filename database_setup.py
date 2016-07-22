@@ -12,21 +12,42 @@ Base = declarative_base()
 
 
 ##class
+class User(Base):
+    __tablename__ = 'user'
+
+    # mapper
+    id = Column(
+      Integer, primary_key = True)
+
+    name = Column(
+      String(250), nullable = False)
+
+    email = Column(
+      String(250), nullable = False)
+
+    picture = Column(
+      String(250))
+
+
 class Category(Base):
 
     #table
     __tablename__ = 'category'
 
-
     # mapper
+    id = Column ( 
+      Integer, primary_key = True)
+
     name = Column (
       String(80), nullable = False)
 
     slug = Column (
       String(80), nullable = False)
 
-    id = Column ( 
-      Integer, primary_key = True)
+    user_id = Column(
+      Integer, ForeignKey('user.id'))
+
+    user = relationship(User)
 
 
 class Item(Base):
@@ -35,24 +56,30 @@ class Item(Base):
     __tablename__ = 'item'
 
     # mapper
+    id = Column (
+      Integer, primary_key = True)
+
     name = Column (
       String(80), nullable = False)
 
     slug = Column (
       String(80), nullable = False)
 
-    id = Column (
-      Integer, primary_key = True)
-
-    created_date = Column(DateTime, default=datetime.utcnow())
+    created_date = Column(
+      DateTime, default=datetime.utcnow())
 
     description = Column (
       String(1000))
 
     category_id = Column(
       Integer, ForeignKey('category.id'))
-
+    
     category = relationship(Category)
+
+    user_id = Column(
+      Integer, ForeignKey('user.id'))
+
+    user = relationship(User)
 
 
     @property

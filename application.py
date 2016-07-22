@@ -3,7 +3,7 @@ app = Flask(__name__)
 # from flask import request
 
 # import CRUD oparations from lesson 1 #
-from database_setup import Base, Category, Item
+from database_setup import Base, Category, Item, User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -127,6 +127,15 @@ def gconnect():
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
+    # see if user exists, if it doesn't make a new one.
+    user_id = getUserId(login_session['email'])
+
+    if not user_id:
+        user_id = createUser(login_session)
+
+    login_session['user_id'] = user_id
+
+
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
@@ -137,6 +146,28 @@ def gconnect():
     flash('you are now logged in as %s' %login_session['username'] )
     print 'done!'
     return output
+
+
+def createUser(login_session):
+    newUser = User(name=login_session['username'], email=login_session[
+                   'email'], picture=login_session['picture'])
+    session.add(newUser)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    return user.id
+
+
+def getUserInfo(user_id):
+    user = session.query(User).filter_by(id=user_id).one()
+    return user
+
+
+def getUserId(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
 
 
 # Disconnect - revoke a current user's token and reset thir login_session.
@@ -210,6 +241,7 @@ def editItem(category_slug, item_slug):
     item = session.query(Item).filter(Item.slug == item_slug).one()
 
     if request.method == "POST":
+        item.user_id = login_session['user_id']
         item.name = request.form['name']
         item.slug = request.form['name'].lower().replace(' ','_')
         item.description = request.form['description']
@@ -260,7 +292,8 @@ def addItem():
                     name=request.form['name'], 
                     slug=request.form['name'].lower().replace(' ','_'), 
                     description=request.form['description'], 
-                    category_id=request.form['category_id']
+                    category_id=request.form['category_id'],
+                    user_id=login_session['user_id']
                 )
 
         session.add(newItem)
@@ -273,6 +306,7 @@ def addItem():
     else:
         categories = session.query(Category).all()
         return render_template('additem.html',categories=categories)
+
 
 
 if __name__ == '__main__':

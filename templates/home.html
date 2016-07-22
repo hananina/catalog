@@ -28,10 +28,10 @@
               <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="/">Catalog</a>
-            <a class="navbar-login" href="/login">Login</a>
-            
             <!-- to hide logout while the user is not logged in. -->
-            {% if status == "logged_in" %}
+            {% if status == "logged_out" %}
+            <a class="navbar-login" href="/login">Login</a>
+            {% else %}
             <a class="navbar-login" href="/gdisconnect">Logout</a>
             {% endif %}
           </div>

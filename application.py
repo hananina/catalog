@@ -234,6 +234,43 @@ def getUserId(email):
     except:
         return None
 
+# Disconnect - revoke a current user's token and reset thir login_session.
+@app.route('/gdisconnect')
+def gdisconnect():
+    # only disconnect a connected user.
+    access_token = login_session.get('access_token')
+
+    if access_token is None:
+        print 'no access token'
+        response = "Current User not connected."
+        return render_template('notification.html', response=response)
+
+    #Excute HTTP GET request to revoke current token.
+    # To revoke, pass the access token to Google's url and store the response in "result" object.
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[0]
+    print 'result is '
+    print 'access_token in disconnect is = '
+    print access_token
+    print result
+
+    if result['status'] == '200':
+        # Reset the user's session.
+        del login_session['access_token']
+        del login_session['gplus_id']
+        del login_session['username']
+        del login_session['email']
+        del login_session['picture']
+        response = "You are succesfully logged out."
+        return render_template('notification.html', response=response)
+
+    else:
+        # For watever reason, the given token was invalid.
+        response = "Faild to revoke token for intended user."
+        return render_template('notification.html', response=response)
+
+
 
 # Disconnect - revoke a current user's token and reset thir login_session.
 @app.route('/gdisconnect')

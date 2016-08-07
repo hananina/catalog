@@ -89,9 +89,10 @@ class Item(Base):
             'name' :self.name,
             'slug' : self.slug,
             'id' : self.id,
-            'create_date': self.create_date,
+            'created_date': str(self.created_date),
             'description': self.description,
-            'category_id': self.category_id
+            'category_id': self.category_id,
+            'user_id': self.user_id
         }
 
 ####insert at end of file#####

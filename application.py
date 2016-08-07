@@ -1,13 +1,16 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for,
+                 flash, jsonify
 app = Flask(__name__)
 # from flask import request
+
+from datetime import datetime
 
 # import CRUD oparations from lesson 1 #
 from database_setup import Base, Category, Item, User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-# new impotys for this step (OAUTH2) 
+# new impotys for this step (OAUTH2)
 from flask import session as login_session
 import random, string
 
@@ -43,6 +46,19 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
+@app.route('/<string:category_slug>/items/JSON')
+def categoryItemsJSON(category_slug):
+    category =session.query(Category).filter_by(slug = category_slug).one()
+    items = session.query(Item).filter_by(category_id = category.id)
+    return jsonify(Items=[item.serialize for item in items])
+
+
+@app.route('/<string:category_slug>/<string:item_slug>/JSON')
+def ItemJSON(category_slug, item_slug):
+    item = session.query(Item).filter_by(slug = item_slug).one()
+    return jsonify(Item=[item.serialize])
+
+
 # to generate unique session token
 @app.route('/login')
 def showLogin():
@@ -58,14 +74,15 @@ def fbconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     access_token = request.data
+
     print "access token received %s " % access_token
 
+    # exchange the short-lived token for a long-lived serverside token with GET /oauth.
     app_id = json.loads(open('fb_client_secrets.json', 'r').read())[
         'web']['app_id']
     app_secret = json.loads(
         open('fb_client_secrets.json', 'r').read())['web']['app_secret']
-    url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (
-        app_id, app_secret, access_token)
+    url = "https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s" % (app_id, app_secret, access_token)
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
 
@@ -86,7 +103,8 @@ def fbconnect():
     login_session['email'] = data["email"]
     login_session['facebook_id'] = data["id"]
 
-    # The token must be stored in the login_session in order to properly logout, let's strip out the information before the equals sign in our token
+    # The token must be stored in the login_session in order to properly logout, 
+    # let's strip out the information before the equals sign in our token
     stored_token = token.split("=")[1]
     login_session['access_token'] = stored_token
 
@@ -109,9 +127,10 @@ def fbconnect():
     output += login_session['username']
 
     output += '!</h1>'
-    output += '<img src="'
+    output += "<img src='"
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += """' style ='width: 300px; height: 300px;border-radius: 150px;
+             -webkit-border-radius: 150px;-moz-border-radius: 150px;'> """
 
     flash("Now logged in as %s" % login_session['username'])
     return output
@@ -324,7 +343,8 @@ def home():
 def showCategoryItems(category_slug):
     theCategory = session.query(Category).filter(Category.slug == category_slug).one()
     items  = session.query(Item).filter_by(category_id = theCategory.id)
-    return render_template('categoryitems.html', category_slug=category_slug, category_name=theCategory.name, items=items)
+    return render_template('categoryitems.html', category_slug=category_slug,
+                            category_name=theCategory.name, items=items)
 
 
 @app.route('/<string:category_slug>/<string:item_slug>')
@@ -335,10 +355,12 @@ def showItem(category_slug, item_slug):
     creater = getUserInfo(item.user_id)
 
     if 'username' not in login_session or creater != login_session['user_id']:
-        return render_template('item_public.html', category_slug=category_slug, category_name=theCategory.name, item=item)
+        return render_template('item_public.html', category_slug=category_slug,
+                                category_name=theCategory.name, item=item)
 
     else:
-        return render_template('item_private.html', category_slug=category_slug, category_name=theCategory.name, item=item, creater=creater)
+        return render_template('item_private.html', category_slug=category_slug,
+                                category_name=theCategory.name, item=item, creater=creater)
 
 
 @app.route('/<string:category_slug>/<string:item_slug>/edit', methods = ['GET','POST'])
@@ -351,7 +373,8 @@ def editItem(category_slug, item_slug):
     item = session.query(Item).filter(Item.slug == item_slug).one()
 
     if item.user_id != login_session['user_id']:
-        return "<script>function alertFunction(){ alert('You are not authrized to delete this item.');}</script><body onload='alertFunction()'>"
+        return """<script>function alertFunction(){ alert('You are not authrized to delete this item.');}
+                </script><body onload='alertFunction()'>"""
 
     if request.method == "POST":
         item.user_id = login_session['user_id']
@@ -365,14 +388,15 @@ def editItem(category_slug, item_slug):
 
         # to get category slug from updated item, in order to use redirect argument
         theCategory = session.query(Category).filter(Category.id == item.category_id).one()
-        return redirect (url_for('showItem', category_slug=theCategory.slug, item_slug= item.slug))      
+        return redirect (url_for('showItem', category_slug=theCategory.slug, item_slug= item.slug))
 
     else:
         # to get category info
         theCategory = session.query(Category).filter(Category.slug == category_slug).one()
         # to get categories for edit category the item is belonged.
         categories = session.query(Category).all()
-        return render_template('edititem.html', item=item, category_slug=category_slug, category_name=theCategory.name, categories=categories)
+        return render_template('edititem.html', item=item, category_slug=category_slug,
+                                category_name=theCategory.name, categories=categories)
 
 
 @app.route('/<string:category_slug>/<string:item_slug>/delete', methods = ['GET','POST'])
@@ -385,7 +409,8 @@ def deleteItem(category_slug, item_slug):
     theCategory = session.query(Category).filter(Category.slug == category_slug).one()
     
     if item.user_id != login_session['user_id']:
-        return "<script>function alertFunction(){ alert('You are not authrized to delete this item.');}</script><body onload='alertFunction()'>"
+        return """<script>function alertFunction(){ alert('You are not authrized to delete this item.');}
+                    </script><body onload='alertFunction()'>"""
 
     if request.method == "POST":
         session.delete(item)
@@ -394,7 +419,8 @@ def deleteItem(category_slug, item_slug):
         return redirect(url_for('showCategoryItems', category_slug=category_slug))
 
     else:
-        return render_template('deleteitem.html', item=item, category_slug=category_slug, category_name= theCategory.name)
+        return render_template('deleteitem.html', item=item, category_slug=category_slug,
+                                category_name= theCategory.name)
 
 
 @app.route('/add', methods =['GET','POST'])

@@ -358,15 +358,13 @@ def showItem(category_slug, item_slug):
     theCategory = session.query(Category).filter(Category.slug == category_slug).one()
     item = session.query(Item).filter(Item.slug == item_slug).one()
 
-    creater = getUserInfo(item.user_id)
-
-    if 'username' not in login_session or creater != login_session['user_id']:
+    if 'username' not in login_session or item.user_id != login_session['user_id']:
         return render_template('item_public.html', category_slug=category_slug,
                                 category_name=theCategory.name, item=item)
 
     else:
         return render_template('item_private.html', category_slug=category_slug,\
-                                category_name=theCategory.name, item=item, creater=creater)
+                                category_name=theCategory.name, item=item)
 
 
 @app.route('/<string:category_slug>/<string:item_slug>/edit', methods = ['GET','POST'])
@@ -436,20 +434,29 @@ def addItem():
         return redirect('/login')
 
     if request.method == "POST":
-        newItem = Item(
-                    name=request.form['name'], 
-                    slug=request.form['name'].lower().replace(' ','_'), 
-                    description=request.form['description'], 
-                    category_id=request.form['category_id'],
-                    user_id=login_session['user_id']
-                )
+        allItemName = session.query(Item.name).all()
+        newItemName = request.form['name']
 
-        session.add(newItem)
-        session.commit()
+        if str(newItemName) in str(allItemName):
+            return 'its alreadt exist'
 
-        theCategory = session.query(Category).filter(Category.id==request.form['category_id']).one()
+        else:
+            newItem = Item(
+                        name=request.form['name'], 
+                        slug=request.form['name'].lower().replace(' ','_'), 
+                        description=request.form['description'], 
+                        category_id=request.form['category_id'],
+                        user_id=login_session['user_id']
+                    )
 
-        return redirect (url_for('showCategoryItems', category_slug=theCategory.slug))
+            session.add(newItem)
+            session.commit()
+
+
+            theCategory = session.query(Category).filter(Category.id==request.form['category_id']).one()
+
+            return redirect (url_for('showCategoryItems', category_slug=theCategory.slug))
+
 
     else:
         categories = session.query(Category).all()

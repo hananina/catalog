@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for,
+from flask import Flask, render_template, request, redirect, url_for,\
                  flash, jsonify
 app = Flask(__name__)
 # from flask import request
@@ -48,6 +48,11 @@ session = DBSession()
 
 @app.route('/<string:category_slug>/items/JSON')
 def categoryItemsJSON(category_slug):
+    """
+    To display the information of items in the specific category in JSON.
+    Args: arg1 (data type: str): use existing category_slug to get the intended category.  
+    Returns: return API data as JSON through the serialize method defined in detabase_setup.py
+    """
     category =session.query(Category).filter_by(slug = category_slug).one()
     items = session.query(Item).filter_by(category_id = category.id)
     return jsonify(Items=[item.serialize for item in items])
@@ -109,7 +114,8 @@ def fbconnect():
     login_session['access_token'] = stored_token
 
     # Get user picture
-    url = 'https://graph.facebook.com/v2.4/me/picture?%s&redirect=0&height=200&width=200' % token
+    url = """https://graph.facebook.com/v2.4/me/picture?%s&redirect=0&height=200
+                &width=200""" % token
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
     data = json.loads(result)
@@ -343,7 +349,7 @@ def home():
 def showCategoryItems(category_slug):
     theCategory = session.query(Category).filter(Category.slug == category_slug).one()
     items  = session.query(Item).filter_by(category_id = theCategory.id)
-    return render_template('categoryitems.html', category_slug=category_slug,
+    return render_template('categoryitems.html', category_slug=category_slug,\
                             category_name=theCategory.name, items=items)
 
 
@@ -359,7 +365,7 @@ def showItem(category_slug, item_slug):
                                 category_name=theCategory.name, item=item)
 
     else:
-        return render_template('item_private.html', category_slug=category_slug,
+        return render_template('item_private.html', category_slug=category_slug,\
                                 category_name=theCategory.name, item=item, creater=creater)
 
 
@@ -395,7 +401,7 @@ def editItem(category_slug, item_slug):
         theCategory = session.query(Category).filter(Category.slug == category_slug).one()
         # to get categories for edit category the item is belonged.
         categories = session.query(Category).all()
-        return render_template('edititem.html', item=item, category_slug=category_slug,
+        return render_template('edititem.html', item=item, category_slug=category_slug,\
                                 category_name=theCategory.name, categories=categories)
 
 
@@ -419,7 +425,7 @@ def deleteItem(category_slug, item_slug):
         return redirect(url_for('showCategoryItems', category_slug=category_slug))
 
     else:
-        return render_template('deleteitem.html', item=item, category_slug=category_slug,
+        return render_template('deleteitem.html', item=item, category_slug=category_slug,\
                                 category_name= theCategory.name)
 
 
